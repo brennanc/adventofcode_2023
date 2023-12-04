@@ -15,16 +15,10 @@ func main() {
 	defer input.Close()
 	sc := bufio.NewScanner(input)
 
-	max_red := 12
-	max_green := 13
-	max_blue := 14
-
-	game_count := 0
+	power_sum := 0
 	for sc.Scan() {
 		line := sc.Text()
 		game := strings.Split(line, ":")
-		game_strid := strings.Split(game[0], " ")
-		game_num, _ := strconv.Atoi(game_strid[1])
 		game_data := strings.Split(game[1], ";")
 
 		current_red_max := 0
@@ -55,12 +49,10 @@ func main() {
 				}
 			}
 		}
-		if (current_red_max <= max_red) && (current_green_max <= max_green) && (current_blue_max <= max_blue) {
-			fmt.Println(line)
-			fmt.Printf("Adding game %d\n", game_num)
-			game_count += game_num
-		}
+		fmt.Println(line)
+		fmt.Printf("current_red_max = %d, current_gren_max = %d, current_blue_max = %d\n", current_red_max, current_green_max, current_blue_max)
+		power_sum += (current_red_max * current_green_max * current_blue_max)
 	}
 
-	fmt.Println(game_count)
+	fmt.Println(power_sum)
 }
