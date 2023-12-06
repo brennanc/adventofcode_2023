@@ -20,21 +20,6 @@ func main() {
 	lines := make([]string, 0)
 	symbol_positions := make([][]int, 0)
 
-	/*
-		Generate map of [line index](array of symbol index positions)
-
-		Func for prev_line evaluation, current line, and next line
-
-		For each line
-		- Find numbers with start and end indices
-		- For prev line (if 0th index, skip)
-		    - Was symbol (non-digit and non ‘.’) present from start index-1 to end index+1
-		- For cur line
-		    - Is symbol present at start index-1 or end index+1
-		- For next line
-		    - Is symbol present from start index-1 to end index+1
-	*/
-
 	for sc.Scan() {
 		line := sc.Text()
 		lines = append(lines, line)
@@ -52,9 +37,6 @@ func main() {
 	part_num_sum := 0
 	invalid_part_num_sum := 0
 	for j := 0; j < NUM_INPUT_LINES; j++ {
-		if j == 68 {
-			j = 68
-		}
 		part_nums, invalid_part_nums := evaluateLine(lines, j, symbol_positions)
 		for _, part_num := range part_nums {
 			part_num_sum += part_num
@@ -63,11 +45,6 @@ func main() {
 		for _, inv_part_num := range invalid_part_nums {
 			invalid_part_num_sum += inv_part_num
 			total_part_nums++
-		}
-		if (j <= 4) || (j >= 135) {
-			//fmt.Printf("LINE %d: %s\n", j, lines[j])
-			//fmt.Printf("LINE %d: %v\n", j, part_nums)
-			//fmt.Println(part_nums)
 		}
 	}
 	fmt.Printf("Valid sum: %d, Invalid sum: %d\n", part_num_sum, invalid_part_num_sum)
@@ -86,11 +63,11 @@ func evaluateLine(lines []string, index int, symbolPositions [][]int) ([]int, []
 		end_idx := pos[1]
 		isValidPartNum := false
 		if (!isFirstLine) && (!isLastLine) {
-			isValidPartNum = (evalAdjacentLine(lines[index-1], symbolPositions[index-1], start_idx, end_idx) || evalCurLine(lines[index], symbolPositions[index], start_idx, end_idx) || evalAdjacentLine(lines[index+1], symbolPositions[index+1], start_idx, end_idx))
+			isValidPartNum = (evalAdjacentLine(symbolPositions[index-1], start_idx, end_idx) || evalCurLine(symbolPositions[index], start_idx, end_idx) || evalAdjacentLine(symbolPositions[index+1], start_idx, end_idx))
 		} else if isFirstLine {
-			isValidPartNum = evalCurLine(lines[index], symbolPositions[index], start_idx, end_idx) || evalAdjacentLine(lines[index+1], symbolPositions[index+1], start_idx, end_idx)
+			isValidPartNum = evalCurLine(symbolPositions[index], start_idx, end_idx) || evalAdjacentLine(symbolPositions[index+1], start_idx, end_idx)
 		} else if isLastLine {
-			isValidPartNum = evalAdjacentLine(lines[index-1], symbolPositions[index-1], start_idx, end_idx) || evalCurLine(lines[index], symbolPositions[index], start_idx, end_idx)
+			isValidPartNum = evalAdjacentLine(symbolPositions[index-1], start_idx, end_idx) || evalCurLine(symbolPositions[index], start_idx, end_idx)
 		}
 		if isValidPartNum {
 			part_num, _ := strconv.Atoi(lines[index][pos[0]:pos[1]])
@@ -105,7 +82,7 @@ func evaluateLine(lines []string, index int, symbolPositions [][]int) ([]int, []
 	return part_nums, invalid_part_nums
 }
 
-func evalCurLine(line string, symbolPositions []int, startIdx int, endIdx int) bool {
+func evalCurLine(symbolPositions []int, startIdx int, endIdx int) bool {
 	for _, pos := range symbolPositions {
 		if (pos == startIdx-1) || (pos == endIdx) {
 			return true
@@ -114,7 +91,7 @@ func evalCurLine(line string, symbolPositions []int, startIdx int, endIdx int) b
 	return false
 }
 
-func evalAdjacentLine(line string, symbolPositions []int, startIdx int, endIdx int) bool {
+func evalAdjacentLine(symbolPositions []int, startIdx int, endIdx int) bool {
 	for _, pos := range symbolPositions {
 		if (pos >= startIdx-1) && (pos <= endIdx) {
 			return true
