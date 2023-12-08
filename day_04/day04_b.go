@@ -10,7 +10,7 @@ import (
 
 func main() {
 	//Read input file
-	input, _ := os.Open("input2.txt")
+	input, _ := os.Open("input.txt")
 	defer input.Close()
 	sc := bufio.NewScanner(input)
 
@@ -53,6 +53,13 @@ func main() {
 		additionalCards := m[i]
 		for j := 1; j <= additionalCards; j++ {
 			cardCount[i+j]++
+		}
+		if cardCount[i] > 1 {
+			for j := 1; j < cardCount[i]; j++ {
+				for k := 1; k <= additionalCards; k++ {
+					cardCount[i+k]++
+				}
+			}
 		}
 	}
 
